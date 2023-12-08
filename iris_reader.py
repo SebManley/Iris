@@ -13,8 +13,5 @@ def read_csv(csvfile):
 
             return result
 
-    except:
+    except FileNotFoundError:
         print("An exception has occurred.")
-
-
-print(read_csv("iris.csv"))

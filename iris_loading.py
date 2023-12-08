@@ -1,5 +1,5 @@
 import pyodbc
-from iris_reader import read_csv
+from iris_reader import *
 # pd is a reference variable for pandas
 import pandas as pd
 from sqlalchemy import create_engine
@@ -30,5 +30,3 @@ contents = read_csv("iris.csv")
 # cursor = docker_Iris.cursor()
 
 contents.to_sql('table_name', con=engine, if_exists='replace', index=False)
-
-
