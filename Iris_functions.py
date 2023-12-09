@@ -58,6 +58,7 @@ def return_header(df):
         modified_p = p.replace(".", "_")
         pro_header.append(modified_p)
 
+    # Creates a new col name for each iteration and adds the header value to the corresponding col name in the dict
     for i in pro_header:
         col_dict[f"col{x}"] = i
         x += 1
@@ -75,7 +76,8 @@ def writing_to_sql(file, table):
 
     # Creates a SQL table within the database using the column names extracted in the return_header function
     cursor.execute(f"DROP TABLE IF EXISTS {table_name};"
-                   f"CREATE TABLE {table_name} ({header["col1"]} FLOAT, {header["col2"]} FLOAT, {header["col3"]} FLOAT, {header["col4"]} FLOAT, {header["col5"]} VARCHAR(20));")
+                   f"CREATE TABLE {table_name} ({header["col1"]} FLOAT, {header["col2"]} FLOAT, {header["col3"]} FLOAT,"
+                   f" {header["col4"]} FLOAT, {header["col5"]} VARCHAR(20));")
 
     # For loop iterates through the rows of the dataframe beginning after the header row
     # Each column in the row is assigned to a value variable for later insertion into the sql db
@@ -87,11 +89,41 @@ def writing_to_sql(file, table):
         val5 = row.iloc[4]
 
         # Using ? creates a parameterized query - the values can then be passed on execution
-        query = f"INSERT INTO {table_name} ({header['col1']}, {header['col2']}, {header['col3']}, {header['col4']}, {header['col5']}) VALUES (?, ?, ?, ?, ?)"
+        query = (f"INSERT INTO {table_name} ({header['col1']}, {header['col2']}, {header['col3']}, {header['col4']}, "
+                 f"{header['col5']}) VALUES (?, ?, ?, ?, ?)")
 
         cursor.execute(query, val1, val2, val3, val4, val5)
 
+    # Commits the execution to the SQL db
     connection.commit()
+    # Closes the db cursor
     cursor.close()
+    # Closes the db connection to free up resources
     connection.close()
 
+
+# Function queries a SQL table within the specified db to return the average plant properties
+def extract_sql_to_txt(table, query, txt_file):
+    connection, cursor = iris_connect()
+
+    query = query
+
+    # Executes the query and retrieves all the rows
+    result = cursor.execute(query).fetchall()
+
+    try:
+        # Opens the file in write method
+        with open(txt_file, "w") as txt_file:
+            # Iterates through the rows in result and converts to string as .write can only be used on strings
+            # each element of the row is then joined by a comma. Each row is then separated by a new line
+            for row in result:
+                line = ', '.join(map(str, row))
+                txt_file.write(line + '\n')
+
+    except FileNotFoundError:
+        "Error: An exception has occurred when writing to txt file"
+    finally:
+        txt_file.close()
+
+    cursor.close()
+    connection.close()
