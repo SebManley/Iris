@@ -79,8 +79,9 @@ def writing_to_sql(file, table):
                    f"CREATE TABLE {table_name} ({header["col1"]} FLOAT, {header["col2"]} FLOAT, {header["col3"]} FLOAT,"
                    f" {header["col4"]} FLOAT, {header["col5"]} VARCHAR(20));")
 
-    # For loop iterates through the rows of the dataframe beginning after the header row
+    # For loop iterates through the rows of the dataframe beginning after the header row using iloc [1:]
     # Each column in the row is assigned to a value variable for later insertion into the sql db
+    # row.iloc[x] specifies the column index of the row
     for index, row in data.iloc[1:].iterrows():
         val1 = row.iloc[0]
         val2 = row.iloc[1]
