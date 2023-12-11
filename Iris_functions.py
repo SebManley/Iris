@@ -10,13 +10,13 @@ def iris_connect():
     username = 'SA'
     password = 'Password123!'
 
-    docker_Iris = ('DRIVER={ODBC Driver 17 for SQL Server};'
+    docker_iris = ('DRIVER={ODBC Driver 17 for SQL Server};'
                    'SERVER=' + server +
                    ';DATABASE=' + database +
                    ';UID=' + username +
                    ';PWD=' + password)
 
-    connection = pyodbc.connect(docker_Iris)
+    connection = pyodbc.connect(docker_iris)
     cursor = connection.cursor()
 
     # Using two return statements will make the second unreachable
@@ -75,9 +75,7 @@ def writing_to_sql(file, table):
     table_name = table
 
     # Creates a SQL table within the database using the column names extracted in the return_header function
-    cursor.execute(f"DROP TABLE IF EXISTS {table_name};"
-                   f"CREATE TABLE {table_name} ({header["col1"]} FLOAT, {header["col2"]} FLOAT, {header["col3"]} FLOAT,"
-                   f" {header["col4"]} FLOAT, {header["col5"]} VARCHAR(20));")
+    cursor.execute(f"DROP TABLE IF EXISTS {table_name};" + f"CREATE TABLE {table_name} ({header['col1']} FLOAT, {header['col2']} FLOAT, {header['col3']} FLOAT, {header['col4']} FLOAT, {header['col5']} VARCHAR(20));")
 
     # For loop iterates through the rows of the dataframe beginning after the header row using iloc [1:]
     # Each column in the row is assigned to a value variable for later insertion into the sql db
